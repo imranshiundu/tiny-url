@@ -1,63 +1,32 @@
 # tiny-url
 
-**tiny-url** is a small URL shortener service built with plain Node.js. It stores links in a local JSON file, generates short codes, redirects visitors, and exposes a tiny HTTP API.
-
-## Features
-
-- Shorten URLs through HTTP API
-- Redirect by short code
-- Optional custom alias
-- Click counting
-- Local JSON storage
-- Health endpoint
-- Zero runtime dependencies
+Your own minimal URL shortener: a small HTTP service with persisted links.
 
 ## Run
 
 ```bash
-npm install
-npm start
+PORT=3000 DATA_FILE=data/links.json node server.js
 ```
 
-Default server: `http://localhost:3000`
+No frameworks, no DB — plain `node:http` and a JSON file are the whole stack.
 
 ## API
 
-Create a short link:
+| Method | Path | Purpose |
+|---|---|---|
+| GET | `/health` | liveness: `{ ok: true }` |
+| GET | `/api/links` | list all stored links |
+| POST | `/api/links` | create one; returns its short URL |
 
-```bash
-curl -X POST http://localhost:3000/api/links \
-  -H "content-type: application/json" \
-  -d '{"url":"https://example.com","alias":"demo"}'
-```
+Short URLs resolve with a redirect inside the helper (`resolveLink`) — provided by the
+library (`index.js`): `createLink`, `listLinks`, `makeShortUrl`, `resolveLink`.
 
-Open:
+## Storage model
 
-```bash
-curl -i http://localhost:3000/demo
-```
+- `DATA_FILE` (default `data/links.json`) is a JSON file — safe enough for personal use;
+  swap in a real DB if you need durability guarantees.
+- `PORT` (default `3000`).
 
-List links:
+## Status
 
-```bash
-curl http://localhost:3000/api/links
-```
-
-Health check:
-
-```bash
-curl http://localhost:3000/health
-```
-
-## Environment
-
-| Variable | Default | Description |
-| --- | --- | --- |
-| `PORT` | `3000` | HTTP port |
-| `DATA_FILE` | `data/links.json` | JSON storage path |
-
-## Development
-
-```bash
-npm test
-```
+Experimental/starter repo — classic "tool generated from a tutorials prompt" origin.
